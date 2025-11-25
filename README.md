@@ -266,8 +266,8 @@ If you encounter quota-related errors when running locally with a free-tier Gemi
 
 1.  **Clone the repository**
     ```bash
-    git clone https://github.com/mr-xlr8-AGT/sentinel.git
-    cd sentinel
+    git clone https://github.com/mr-xlr8-AGT/Sentinel-project.git
+    cd Sentinel-project
     ```
 
 2.  **Install dependencies**
