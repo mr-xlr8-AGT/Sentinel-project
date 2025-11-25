@@ -1,5 +1,6 @@
-
 # ⿗ S E N T I N E L
+
+[**Deployed App**](https://sentinel-55600892774.us-west1.run.app/)
 
 ![License](https://img.shields.io/badge/license-MIT-blue.svg)
 ![React](https://img.shields.io/badge/react-v19.0-61DAFB?logo=react)
@@ -78,6 +79,106 @@ Sentinel employs a multi-step, state-machine architecture powered by Google's **
 5.  **📝 Reporter Agent** (`gemini-2.5-flash`)
     *   **Role:** The Closer.
     *   **Task:** Compiles everything into a C-Level Executive Markdown report.
+
+---
+
+## 🏗️ How Sentinel Implements Architectural Requirements
+
+1. **Multi-Agent System**
+   - Implemented as a Sequential Agent Chain via a state machine in `App.tsx`'s `handleAnalyze` including:
+     - **Router Agent:** Classifies intent.
+     - **Hunter Agent:** Finds data.
+     - **Scraper Agent:** Context compaction.
+     - **Analyst Agent:** Strategic reasoning.
+     - **Reporter Agent:** Generates output.
+   - **Sample:**
+     ```tsx
+     // The Orchestrator
+     const handleAnalyze = async () => {
+       // ...setup state...
+       setState(prev => ({ ...prev, currentAgent: AgentRole.ROUTER }));
+       const routerResult = await runRouterAgent(query);
+       setState(prev => ({ ...prev, currentAgent: AgentRole.HUNTER }));
+       const hunterResult = await runHunterAgent(routerResult.target_company, routerResult.search_queries);
+       setState(prev => ({ ...prev, currentAgent: AgentRole.SCRAPER }));
+       const scraperResult = await runScraperAgent(hunterResult.discoveredUrls);
+       // ...continues to Analyst and Reporter...
+     }
+     ```
+
+2. **Tools (Built-in Gemini/Google Search Tool)**
+   - Integrated via Gemini SDK in `geminiService.ts` (`runHunterAgent`, `createChatSession`).
+   - Real-world search grounding enabled by `tools: [{ googleSearch: {} }]` prop.
+   - **Sample:**
+     ```typescript
+     export const runHunterAgent = async (company: string, queries: string[]): Promise<{ discoveredUrls: ScrapedContent[], log: LogEntry }> => {
+       const response = await ai.models.generateContent({
+         model: MODELS.HUNTER,
+         contents: `Find the latest official news...`,
+         config: {
+           tools: [{ googleSearch: {} }],
+         }
+       });
+       // ...extract groundingMetadata...
+     }
+     ```
+
+3. **Sessions & Memory**
+   - Short-term handled by React state (useState) in `App.tsx`.
+   - Long-term memory (history) serialized in browser `localStorage` and loaded on mount.
+   - **Sample:**
+     ```tsx
+     useEffect(() => {
+       const savedHistory = localStorage.getItem('sentinel_history');
+       if (savedHistory) setHistory(JSON.parse(savedHistory));
+     }, []);
+     useEffect(() => {
+       localStorage.setItem('sentinel_history', JSON.stringify(history));
+     }, [history]);
+     ```
+
+4. **Context Compaction**
+   - Scraper Agent reduces token/irrelevant data before analyst agent gets context (`geminiService.ts`).
+   - **Sample:**
+     ```typescript
+     export const runScraperAgent = async (urls: ScrapedContent[]): Promise<{ extractedContent: string, log: LogEntry }> => {
+       const response = await ai.models.generateContent({
+         model: MODELS.SCRAPER,
+         contents: `You are a Data Engineer. Clean and consolidate...\nRAW DATA:\n${rawText}`
+       });
+       // ...extract...
+     }
+     ```
+
+5. **Observability (Logging, Tracing, Metrics)**
+   - Custom logging/telemetry with execution time and cost metrics; visualized in sidebar (`App.tsx`, `Sidebar.tsx`).
+   - **Sample:**
+     ```typescript
+     const calculateCost = (model: string, usage: { promptTokenCount?: number, candidatesTokenCount?: number } | undefined) => {
+       if (!usage) return 0;
+       const pricing = PRICING[model as keyof typeof PRICING];
+       // ...
+     };
+     // ...logging/telemetry with cost & performance...
+     ```
+
+6. **A2A Protocol (Agent-to-Agent Communication)**
+   - Agents communicate via strictly typed JSON output enforced by schema in Gemini (`geminiService.ts`).
+   - **Sample:**
+     ```typescript
+     // Router Agent Output Schema
+     responseSchema: {
+       type: Type.OBJECT,
+       properties: {
+         target_company: { type: Type.STRING },
+         analysis_type: { type: Type.STRING },
+         search_queries: { type: Type.ARRAY, items: { type: Type.STRING } }
+       },
+       required: ["target_company", "analysis_type", "search_queries"]
+     }
+     const routerResult = JSON.parse(response.text || "{}");
+     // routerResult.target_company is now passed to runHunterAgent
+     ```
 
 ---
 
