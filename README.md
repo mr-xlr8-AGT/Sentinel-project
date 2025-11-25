@@ -20,6 +20,29 @@ If you encounter quota-related errors when running locally with a free-tier Gemi
 
 ---
 
+## 📁 File Structure
+
+```
+/
+├── components/
+│   ├── AgentVisualizer.tsx
+│   ├── ComparisonView.tsx
+│   ├── HistoryView.tsx
+│   ├── ReportView.tsx
+│   └── Sidebar.tsx
+├── services/
+│   └── geminiService.ts
+├── App.tsx
+├── constants.ts
+├── index.html
+├── index.tsx
+├── metadata.json
+├── README.md
+└── types.ts
+```
+
+---
+
 ## ⚡ The Mission
 
 **Sentinel** is not a search engine. It is an **Agentic AI Orchestrator** designed to automate the workflow of a top-tier strategy consultant. 
