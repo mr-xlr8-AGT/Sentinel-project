@@ -12,6 +12,14 @@
 
 ---
 
+## ⚠️ Important Note
+
+**For the best experience, please use the [deployed application](https://sentinel-55600892774.us-west1.run.app/).**
+
+If you encounter quota-related errors when running locally with a free-tier Gemini API key, this is expected behavior due to API rate limitations. The deployed version is configured with appropriate API access to ensure uninterrupted service.
+
+---
+
 ## ⚡ The Mission
 
 **Sentinel** is not a search engine. It is an **Agentic AI Orchestrator** designed to automate the workflow of a top-tier strategy consultant. 
