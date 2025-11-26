@@ -6,7 +6,7 @@
 
 [**Sentinel :- Deployed Link**](https://sentinel-55600892774.us-west1.run.app/)
 
-![License](https://img.shields.io/badge/license-MIT-blue.svg)
+![License](https://img.shields.io/badge/license-apache2.0-blue.svg)
 ![React](https://img.shields.io/badge/react-v19.0-61DAFB?logo=react)
 ![TypeScript](https://img.shields.io/badge/typescript-v5.0-3178C6?logo=typescript)
 
