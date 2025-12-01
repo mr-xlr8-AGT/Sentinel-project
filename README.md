@@ -108,7 +108,7 @@ Sentinel employs a multi-step, state-machine architecture powered by Google's **
 ├── index.html
 ├── index.tsx
 ├── metadata.json
-├── services/
+├── assets/
 │   └── Screenshot Glimpse.png
 |   └── Sentinel Logo.jpeg
 ├── README.md
